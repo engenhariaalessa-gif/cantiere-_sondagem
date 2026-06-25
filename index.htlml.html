@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Obra Invisível — Diagnóstico do Engenheiro · Escola Cantiere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== Cantiere tokens — Azul Profundo + Dourado ===== */
+  :root{
+    --azul:#0F3355;            /* Azul Profundo */
+    --azul-fundo:#08203A;      /* Marinho · placas/result */
+    --oro:#C9A24E;             /* Dourado */
+    --oro-claro:#E6C982;
+    --papel:#ECEFF2;           /* papel azul-gelo */
+    --papel-2:#E0E5EA;
+    --tinta:#0E2C49;           /* texto sobre papel */
+    --tinta-suave:#4E6178;
+    --argila:#B5613A;          /* destaque do ponto cego */
+    --linha:rgba(14,44,73,.15);
+
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Inter',system-ui,sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--papel);
+    color:var(--tinta);
+    line-height:1.55;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-start;
+    padding:clamp(16px,4vw,48px) clamp(14px,4vw,24px);
+    background-image:
+      radial-gradient(circle at 20% 8%, rgba(15,51,85,.06), transparent 42%),
+      radial-gradient(circle at 85% 92%, rgba(201,162,78,.06), transparent 45%);
+  }
+  .stage{width:100%;max-width:680px}
+
+  .card{
+    background:var(--papel);
+    border:1px solid var(--linha);
+    border-radius:4px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 18px 50px -28px rgba(8,24,42,.5);
+    overflow:hidden;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--oro);font-weight:500;
+  }
+
+  /* ===================== INTRO ===================== */
+  .intro{padding:clamp(30px,6vw,56px) clamp(24px,6vw,56px) clamp(34px,6vw,52px);text-align:center}
+  .sond{position:relative;height:128px;width:128px;margin:0 auto 22px;overflow:hidden;border-radius:3px}
+  .sond .surface{position:absolute;left:0;right:0;top:50%;bottom:0;background:rgba(15,51,85,.08);border-top:1px dashed var(--oro)}
+  .sond .collar{position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:2px;background:var(--oro)}
+  .sond .bore{position:absolute;top:2px;left:50%;width:1.5px;height:106px;background:linear-gradient(var(--oro),var(--tinta));transform-origin:top;transform:translateX(-50%) scaleY(0)}
+  .sond .probe{position:absolute;left:50%;top:2px;width:11px;height:16px;background:var(--oro);clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%);box-shadow:0 4px 9px -3px rgba(8,24,42,.6);transform:translate(-50%,0)}
+  .sond.drill .bore{animation:bore 1.8s cubic-bezier(.5,0,.2,1) forwards}
+  .sond.drill .probe{animation:probe 1.8s cubic-bezier(.5,0,.2,1) forwards}
+  @keyframes bore{to{transform:translateX(-50%) scaleY(1)}}
+  @keyframes probe{to{transform:translate(-50%,104px)}}
+
+  .intro h1{
+    font-family:var(--serif);font-weight:500;
+    font-size:clamp(38px,8.4vw,62px);line-height:1;
+    letter-spacing:-.015em;margin:10px 0 8px;
+  }
+  .intro .tag{
+    font-family:var(--serif);font-style:italic;font-weight:400;
+    font-size:clamp(16px,3.2vw,20px);color:var(--tinta-suave);
+    max-width:40ch;margin:0 auto 24px;line-height:1.4;
+  }
+  .reflect{
+    max-width:44ch;margin:0 auto 22px;padding:18px 22px;
+    border-top:1px solid var(--linha);border-bottom:1px solid var(--linha);
+    font-family:var(--serif);font-style:italic;font-weight:400;
+    font-size:clamp(16px,3.3vw,19px);line-height:1.45;color:var(--tinta);
+  }
+  .intro p.lead{font-size:15.5px;color:var(--tinta-suave);max-width:48ch;margin:0 auto 30px}
+  .meta-row{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+  .meta-row div{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--tinta-suave);text-transform:uppercase}
+  .meta-row strong{color:var(--azul);font-weight:700}
+
+  /* ===================== BOTÕES ===================== */
+  .btn{
+    font-family:var(--sans);font-weight:600;font-size:15px;
+    background:var(--azul);color:#fff;border:none;border-radius:3px;
+    padding:15px 34px;cursor:pointer;letter-spacing:.01em;
+    transition:transform .15s ease, background .2s ease;
+    box-shadow:0 8px 20px -12px rgba(8,24,42,.85);
+  }
+  .btn:hover{background:var(--azul-fundo);transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.ghost{background:transparent;color:var(--azul);border:1px solid var(--linha);box-shadow:none;font-weight:500}
+  .btn.ghost:hover{background:var(--papel-2);transform:none}
+  .btn:disabled{opacity:.32;cursor:not-allowed;transform:none}
+  .btn:focus-visible,.opt:focus-visible{outline:2px solid var(--oro);outline-offset:3px}
+
+  /* ===================== STEPPER ===================== */
+  .stepper{display:flex;align-items:flex-start;padding:22px clamp(22px,5vw,44px) 0}
+  .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+  .step .rail{position:absolute;top:6px;left:-50%;width:100%;height:1.5px;background:var(--linha);z-index:0}
+  .step:first-child .rail{display:none}
+  .step.done .rail,.step.active .rail{background:var(--oro)}
+  .step .tick{width:13px;height:13px;border-radius:50%;background:var(--papel);border:1.5px solid var(--linha);z-index:1;transition:.25s}
+  .step.done .tick{background:var(--oro);border-color:var(--oro)}
+  .step.active .tick{border-color:var(--oro);background:var(--papel);box-shadow:0 0 0 4px rgba(201,162,78,.2)}
+  .step .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave);text-align:center}
+  .step.active .lab,.step.done .lab{color:var(--azul);font-weight:500}
+
+  /* ===================== PERGUNTAS ===================== */
+  .phase{padding:clamp(26px,5vw,42px) clamp(24px,6vw,52px) clamp(28px,5vw,44px)}
+  .phase-head{margin-bottom:28px}
+  .phase-head .num{font-family:var(--mono);font-size:12px;color:var(--oro);letter-spacing:.16em}
+  .phase-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,5.6vw,40px);line-height:1.05;margin:6px 0 8px;letter-spacing:-.01em}
+  .phase-head p{font-size:14.5px;color:var(--tinta-suave);max-width:50ch}
+
+  .q{padding:22px 0;border-top:1px solid var(--linha)}
+  .q:first-of-type{border-top:none;padding-top:4px}
+  .q .stmt{font-size:16px;font-weight:500;color:var(--tinta);margin-bottom:16px;line-height:1.45}
+  .scale{display:flex;align-items:center;gap:clamp(8px,3vw,16px)}
+  .opts{display:flex;gap:clamp(6px,2.4vw,12px);flex:1;justify-content:space-between}
+  .opt{
+    width:clamp(34px,9vw,42px);height:clamp(34px,9vw,42px);border-radius:50%;
+    border:1.5px solid var(--linha);background:var(--papel);
+    font-family:var(--mono);font-size:13px;color:var(--tinta-suave);
+    cursor:pointer;transition:.15s;display:grid;place-items:center;flex:0 0 auto;
+  }
+  .opt:hover{border-color:var(--oro-claro);color:var(--azul)}
+  .opt.sel{background:var(--azul);border-color:var(--azul);color:#fff;font-weight:700}
+  .anchor-lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-suave);white-space:nowrap;flex:0 0 auto;width:clamp(48px,12vw,70px)}
+  .anchor-lab.r{text-align:right}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:30px;gap:14px}
+  .nav .count{font-family:var(--mono);font-size:11px;color:var(--tinta-suave);letter-spacing:.1em}
+
+  /* ===================== RESULTADO ===================== */
+  .result-top{background:var(--azul-fundo);color:#fff;padding:clamp(34px,6vw,52px) clamp(24px,6vw,52px) clamp(30px,5vw,46px);text-align:center}
+  .result-top .eyebrow{color:var(--oro-claro)}
+  .result-top h2{font-family:var(--serif);font-weight:500;font-size:clamp(34px,8vw,56px);line-height:1.02;margin:14px 0 6px;letter-spacing:-.01em}
+  .result-top .score-line{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--oro-claro);margin-bottom:20px}
+  .result-top .desc{font-size:15.5px;color:rgba(236,240,245,.85);max-width:52ch;margin:0 auto}
+
+  .radar-wrap{display:flex;justify-content:center;padding:clamp(26px,5vw,40px) 16px clamp(8px,3vw,18px);background:var(--papel)}
+  svg.radar{width:100%;max-width:440px;height:auto}
+  .radar .axis{stroke:var(--linha);stroke-width:1}
+  .radar .ring{fill:none;stroke:var(--linha);stroke-width:1}
+  .radar .shape{fill:rgba(201,162,78,.2);stroke:var(--oro);stroke-width:2;stroke-linejoin:round}
+  .radar .dot{fill:var(--azul)}
+  .radar .lbl{font-family:var(--mono);font-size:11px;fill:var(--azul);letter-spacing:.03em}
+  .radar .val{font-family:var(--mono);font-size:10px;fill:var(--oro)}
+
+  .insights{padding:clamp(8px,3vw,18px) clamp(24px,6vw,52px) clamp(28px,5vw,42px)}
+  .insight{border-left:3px solid var(--oro);padding:4px 0 4px 18px;margin:22px 0}
+  .insight.blind{border-left-color:var(--argila)}
+  .insight .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+  .insight.lever .k{color:var(--oro)}
+  .insight.blind .k{color:var(--argila)}
+  .insight .name{font-family:var(--serif);font-size:21px;font-weight:500;margin-bottom:5px}
+  .insight p{font-size:14.5px;color:var(--tinta-suave)}
+
+  .closing{background:var(--papel-2);padding:clamp(28px,5vw,44px) clamp(24px,6vw,52px);border-top:1px solid var(--linha)}
+  .closing .obras-line{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--oro);margin-bottom:14px}
+  .closing h3{font-family:var(--serif);font-weight:500;font-size:clamp(22px,4.5vw,30px);line-height:1.15;margin-bottom:12px}
+  .closing p{font-size:15px;color:var(--tinta-suave);max-width:52ch;margin-bottom:24px}
+  .acao{background:var(--azul-fundo);color:#fff;border-radius:4px;padding:24px 24px 26px;margin:0 0 26px}
+  .acao .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--oro-claro);margin-bottom:12px}
+  .acao .acao-fase{font-family:var(--serif);font-size:19px;font-weight:500;margin-bottom:9px}
+  .acao p{font-size:15px;color:rgba(236,240,245,.92);margin:0}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+  /* ===================== RODAPÉ ESCOLA ===================== */
+  footer.escola{
+    width:100%;max-width:680px;margin:26px auto 8px;
+    padding:30px clamp(8px,4vw,20px) 8px;text-align:center;
+  }
+  footer.escola .mark{
+    font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:.02em;color:var(--azul);
+    margin-bottom:4px;
+  }
+  footer.escola .mark span{color:var(--oro)}
+  footer.escola .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--tinta-suave);margin-bottom:16px}
+  footer.escola p{font-size:13.5px;line-height:1.6;color:var(--tinta-suave);max-width:56ch;margin:0 auto 10px}
+  footer.escola p strong{color:var(--azul);font-weight:600}
+  footer.escola .rule{width:40px;height:2px;background:var(--oro);margin:18px auto 16px}
+
+  .fade{animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .hidden{display:none!important}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:440px){.anchor-lab{width:42px;font-size:8.5px}.meta-row{gap:16px}.step .lab{font-size:8.5px}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="card" id="card"></div>
+</div>
+
+<footer class="escola">
+  <div class="mark">Cantiere<span>.</span></div>
+  <div class="kicker">Escola de Pensamento · Engenharia</div>
+  <div class="rule"></div>
+  <p><em>Cantiere</em> é, em italiano, o canteiro de obras — o lugar onde as coisas se constroem. A <strong>Escola de Pensamento Cantiere</strong> existe para construir engenheiros: não executores que cumprem tarefas, mas profissionais que enxergam a obra invisível, decidem com consequência e se tornam indispensáveis.</p>
+  <p>Aqui a engenharia encontra filosofia, estratégia e ofício. Esta sondagem é o primeiro furo — no terreno do seu próprio valor.</p>
+</footer>
+
+<script>
+/* ============================================================
+   A OBRA INVISÍVEL — Diagnóstico do Engenheiro
+   Escola de Pensamento Cantiere · Protocolo 5D
+   ------------------------------------------------------------
+   Para personalizar, edite as constantes abaixo.
+   ============================================================ */
+const TITULO  = "A Obra Invisível";
+const TAGLINE = "Toda obra tem duas: a que se ergue em concreto e aço, que todos veem — e a invisível, feita de dinheiro, poder e reconhecimento, que decide quem você se torna.";
+const CTA_URL = ""; /* cole aqui seu link de inscrição / WhatsApp / formulário */
+
+/* ===== As três obras invisíveis (5 afirmações cada) ===== */
+const FASES = [
+  {
+    id:"economica", sigla:"OBRA I", nome:"A Obra Econômica", curta:"Econômica",
+    sub:"O dinheiro por trás da técnica. Você vê a tarefa; aqui se vê a margem, o risco e o contrato como o tabuleiro real do jogo.",
+    perguntas:[
+      "Quando recebo um contrato, enxergo nele um ativo com margem e risco — não apenas um conjunto de tarefas a executar.",
+      "Sei dizer, hoje, qual é a margem da obra em que trabalho e qual é a maior ameaça a essa margem.",
+      "Percebo o risco antes de ele estourar — leio no ritmo e nos indicadores de hoje o problema que só apareceria daqui a meses.",
+      "Trato o contrato como o tabuleiro do jogo: sei o que ele define sobre prazo, pagamento e risco, e jogo a partir disso.",
+      "Reconheço quando um “sim” fácil hoje — um improviso sem registro — vai virar prejuízo ou pleito perdido lá na frente."
+    ]
+  },
+  {
+    id:"politica", sigla:"OBRA II", nome:"A Obra Política", curta:"Política",
+    sub:"A sala onde se decide. Quem controla a narrativa do contrato controla a obra — e quase nenhum engenheiro sabe que essa sala existe.",
+    perguntas:[
+      "Entendo que decisões técnicas também são movimentos de poder — e penso nelas assim, não só pela engenharia.",
+      "Sei quem realmente decide o destino do contrato e da minha posição — e o que importa para cada uma dessas pessoas.",
+      "Construo autoridade entregando visão antes de me pedirem, em vez de esperar ser convidado ou autorizado a opinar.",
+      "Invisto de propósito nas relações de confiança que sustentam a minha carreira — não só no domínio técnico.",
+      "Influencio o que se decide sobre prazo, margem e escopo — não apenas executo o que já foi decidido por outros."
+    ]
+  },
+  {
+    id:"reconhecimento", sigla:"OBRA III", nome:"A Obra do Reconhecimento", curta:"Reconhecimento",
+    sub:"Tornar visível o que você faz. Talento sem testemunha não é promovido. É aqui que o Executor Invisível vira o Indispensável.",
+    perguntas:[
+      "Meu trabalho de bastidor fica visível para quem decide e paga — não fico sendo o “executor invisível” que ninguém vê.",
+      "Consigo transformar uma análise técnica complexa em uma recomendação de uma página que a diretoria entende e age sobre ela.",
+      "Registro decisões e acontecimentos de forma que virem prova — sei que, sem registro, a minha versão da história vale zero.",
+      "Meço meu valor pelo que torno indispensável, não pelo quanto estou ocupado apagando incêndios.",
+      "Sei nomear e mostrar o tamanho do que entrego — não trato como “só fiz meu trabalho” algo que salvou margem ou resolveu o insolúvel."
+    ]
+  }
+];
+
+/* ===== Níveis (resultado geral) ===== */
+const NIVEIS = [
+  { min:0,  nome:"Cartógrafo",
+    desc:"Você está começando a mapear a obra invisível. Percebeu que existe uma segunda obra por dentro da que você constrói — e esse é o passo que mais separa quem cresce de quem estaciona. Tudo começa aqui." },
+  { min:35, nome:"Tradutor",
+    desc:"Você já enxerga a obra invisível e começa a lê-la. Decifra parte do dinheiro, do poder ou do reconhecimento. O próximo passo é transformar o que vê em decisão — e em voz." },
+  { min:52, nome:"Estrategista do Jogo",
+    desc:"Você não só vê a obra invisível: você joga nela. Lê o jogo e age com intenção. Falta tornar isso visível e inegociável para quem decide." },
+  { min:68, nome:"O Indispensável",
+    desc:"Você lê as três obras e é difícil de substituir. Decide, demonstra e é procurado. O último passo é deixar de jogar o jogo dos outros e passar a definir as regras." },
+  { min:84, nome:"O Dono do Código",
+    desc:"Você domina a obra invisível — econômica, política e de reconhecimento. Tem instrumentos próprios e move o jogo. Aqui não se trata mais de aprender a ver: você constrói o que os outros ainda não enxergam." }
+];
+
+/* ===== Insights por obra ===== */
+const INSIGHTS = {
+  economica:{
+    lever:"Você enxerga o dinheiro por trás da técnica. Vê margem, lê o risco antes do estouro e trata o contrato como tabuleiro. Essa é a obra que quase nenhum engenheiro vê — e você já vê.",
+    blind:"Para você, a obra ainda é física: concreto, aço, cronograma. Falta enxergar a obra econômica que corre por baixo — margem, risco e o contrato como o jogo real. O risco não está escondido no futuro; está escrito no presente, esperando você aprender a lê-lo."
+  },
+  politica:{
+    lever:"Você lê o poder. Sabe quem decide, constrói autoridade sem pedir licença e investe nas relações que sustentam a carreira. Deixou de esperar convite para a sala onde as coisas se decidem.",
+    blind:"Você joga bem a engenharia, mas não vê o jogo político que decide o destino do contrato — e o seu. Existe uma sala, feita de pessoas e poder, onde tudo se define. Autoridade não é concedida; é construída. E ninguém te chamou ainda porque você está esperando ser chamado."
+  },
+  reconhecimento:{
+    lever:"Você torna visível o que faz. Comunica em uma página, documenta como prova e mede valor pelo que é insubstituível — não pelo quanto está ocupado. Saiu da sombra do Executor Invisível.",
+    blind:"Seu maior risco é o talento que ninguém vê. Trabalho bom não fala por si: talento sem testemunha não é promovido. Enquanto seu valor ficar invisível — sem página, sem registro, sem nome — ele simplesmente não existe para quem decide e paga."
+  }
+};
+
+/* ===== Ação prática (o primeiro furo), por obra ===== */
+const ACOES = {
+  economica:"Escolha a obra em que você está e escreva, em uma só linha: qual é a margem dela hoje e qual é a maior ameaça a essa margem nos próximos três meses. Se você travar para responder, acabou de achar o primeiro furo na sua obra invisível.",
+  politica:"Desenhe, em cinco minutos, o mapa de quem decide o seu contrato: as três pessoas que mais influenciam o destino dele e, ao lado de cada uma, o que de fato importa para ela. Na próxima conversa com uma delas, fale a língua dela — não a sua.",
+  reconhecimento:"Pegue algo que você resolveu esta semana e cujo tamanho ninguém viu. Escreva em três linhas — situação, o que você fez, impacto em R$ ou risco evitado — e envie para quem decide. Hoje. É assim que o invisível vira indispensável."
+};
+
+const ANCHORS = ["ainda não","domino"];
+
+/* ===== Estado ===== */
+let faseAtual = 0;
+const respostas = FASES.map(f=>f.perguntas.map(()=>null));
+const card = document.getElementById('card');
+
+function renderIntro(){
+  card.innerHTML = `
+    <div class="intro fade">
+      <div class="sond drill">
+        <div class="surface"></div><div class="collar"></div>
+        <div class="bore"></div><div class="probe"></div>
+      </div>
+      <div class="eyebrow">Escola de Pensamento Cantiere · Protocolo 5D</div>
+      <h1>${TITULO}</h1>
+      <div class="tag">${TAGLINE}</div>
+      <div class="reflect">Pense na sua última semana de trabalho. Quanto do que você entregou foi tarefa cumprida — e quanto foi valor que alguém de fato percebeu? Quase ninguém para para responder isso. A sondagem começa exatamente aqui.</div>
+      <p class="lead">Ninguém te mostrou a segunda obra. Esta sondagem fura o terreno do seu próprio trabalho em três camadas — o dinheiro, o poder e o reconhecimento — e revela onde você já enxerga, e onde ainda está cego.</p>
+      <div class="meta-row">
+        <div><strong>15</strong> afirmações</div>
+        <div><strong>3</strong> obras invisíveis</div>
+        <div><strong>~4</strong> min</div>
+      </div>
+      <button class="btn" id="start">Iniciar a sondagem</button>
+    </div>`;
+  document.getElementById('start').onclick = ()=>{faseAtual=0;renderFase();};
+}
+
+function stepper(){
+  return `<div class="stepper">${FASES.map((f,i)=>{
+    const cls = i<faseAtual?'done':(i===faseAtual?'active':'');
+    return `<div class="step ${cls}"><div class="rail"></div><div class="tick"></div><div class="lab">${f.curta}</div></div>`;
+  }).join('')}</div>`;
+}
+
+function renderFase(){
+  const f = FASES[faseAtual];
+  const qs = f.perguntas.map((p,qi)=>{
+    const opts=[1,2,3,4,5].map(v=>{
+      const sel = respostas[faseAtual][qi]===v?'sel':'';
+      return `<button class="opt ${sel}" data-q="${qi}" data-v="${v}">${v}</button>`;
+    }).join('');
+    return `<div class="q"><div class="stmt">${p}</div>
+      <div class="scale"><span class="anchor-lab">${ANCHORS[0]}</span>
+      <div class="opts">${opts}</div>
+      <span class="anchor-lab r">${ANCHORS[1]}</span></div></div>`;
+  }).join('');
+
+  card.innerHTML = `${stepper()}
+    <div class="phase fade">
+      <div class="phase-head">
+        <div class="num">${f.sigla} · ${faseAtual+1} de 3</div>
+        <h2>${f.nome}</h2>
+        <p>${f.sub}</p>
+      </div>
+      ${qs}
+      <div class="nav">
+        <button class="btn ghost" id="back">${faseAtual===0?'Início':'Voltar'}</button>
+        <span class="count" id="count"></span>
+        <button class="btn" id="next" disabled>${faseAtual===FASES.length-1?'Ver resultado':'Continuar'}</button>
+      </div>
+    </div>`;
+
+  card.querySelectorAll('.opt').forEach(b=>{
+    b.onclick=()=>{
+      const qi=+b.dataset.q, v=+b.dataset.v;
+      respostas[faseAtual][qi]=v;
+      card.querySelectorAll(`.opt[data-q="${qi}"]`).forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel'); updateNav();
+    };
+  });
+  document.getElementById('back').onclick=()=>{ if(faseAtual===0){renderIntro();}else{faseAtual--;renderFase();} };
+  document.getElementById('next').onclick=()=>{ if(faseAtual===FASES.length-1){renderResult();}else{faseAtual++;renderFase();} };
+  updateNav();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateNav(){
+  const done=respostas[faseAtual].filter(x=>x!==null).length;
+  const total=respostas[faseAtual].length;
+  document.getElementById('count').textContent=`${done}/${total}`;
+  document.getElementById('next').disabled=done<total;
+}
+
+function pct(vals){const a=vals.reduce((s,v)=>s+v,0)/vals.length;return (a-1)/4*100;}
+
+function renderResult(){
+  const faseScores=FASES.map((f,i)=>({fase:f,p:pct(respostas[i])}));
+  const overall=faseScores.reduce((s,x)=>s+x.p,0)/faseScores.length;
+  let nivel=NIVEIS[0]; for(const n of NIVEIS){if(overall>=n.min)nivel=n;}
+  const sorted=[...faseScores].sort((a,b)=>a.p-b.p);
+  const ponto=sorted[0], alav=sorted[sorted.length-1];
+
+  card.innerHTML=`<div class="fade">
+    <div class="result-top">
+      <div class="eyebrow">Sua sondagem · Escola Cantiere</div>
+      <h2>${nivel.nome}</h2>
+      <div class="score-line">ÍNDICE GERAL ${Math.round(overall)} / 100</div>
+      <p class="desc">${nivel.desc}</p>
+    </div>
+    <div class="radar-wrap">${radarSVG(faseScores)}</div>
+    <div class="insights">
+      <div class="insight lever">
+        <div class="k">Sua alavanca · ${alav.fase.curta}</div>
+        <div class="name">${Math.round(alav.p)}/100</div>
+        <p>${INSIGHTS[alav.fase.id].lever}</p>
+      </div>
+      <div class="insight blind">
+        <div class="k">Seu ponto cego · ${ponto.fase.curta}</div>
+        <div class="name">${Math.round(ponto.p)}/100</div>
+        <p>${INSIGHTS[ponto.fase.id].blind}</p>
+      </div>
+    </div>
+    <div class="closing">
+      <div class="obras-line">A obra econômica · A obra política · A obra do reconhecimento</div>
+      <h3>Diagnóstico que não vira ação é só mais um conteúdo.</h3>
+      <p>A maioria lê, concorda e esquece. Você não. Abaixo está um furo que você pode fazer hoje mesmo — pequeno, concreto e direto no seu ponto cego em <strong>${ponto.fase.curta}</strong>. É assim que a Escola Cantiere trabalha o Protocolo 5D: do Despertar ao Dominar, transformando o que você vê em decisão, e decisão em valor.</p>
+      <div class="acao">
+        <div class="k">Ação de hoje · O primeiro furo</div>
+        <div class="acao-fase">${ponto.fase.nome}</div>
+        <p>${ACOES[ponto.fase.id]}</p>
+      </div>
+      <div class="cta-row">
+        <button class="btn" id="cta">Quero conhecer a mentoria</button>
+        <button class="btn ghost" id="restart">Refazer sondagem</button>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('restart').onclick=()=>{faseAtual=0;respostas.forEach(r=>r.fill(null));renderIntro();};
+  document.getElementById('cta').onclick=()=>{
+    if(CTA_URL){window.open(CTA_URL,'_blank');}
+    else{alert('Conecte aqui seu link de inscrição, WhatsApp ou formulário (constante CTA_URL no topo do código).');}
+  };
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== radar (triângulo para 3 obras; genérico para N) ===== */
+function radarSVG(scores){
+  const cx=230, cy=190, R=130, N=scores.length;
+  const ang=i=>(-Math.PI/2)+i*(2*Math.PI/N);
+  const pt=(i,r)=>[cx+Math.cos(ang(i))*r, cy+Math.sin(ang(i))*r];
+  let rings='';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const p=scores.map((_,i)=>pt(i,R*f).map(n=>n.toFixed(1)).join(',')).join(' ');
+    rings+=`<polygon class="ring" points="${p}"/>`;
+  });
+  let axes='';
+  scores.forEach((_,i)=>{const[x,y]=pt(i,R);axes+=`<line class="axis" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;});
+  const shapePts=scores.map((s,i)=>pt(i,R*Math.max(s.p,4)/100).map(n=>n.toFixed(1)).join(',')).join(' ');
+  let dots='',labels='';
+  scores.forEach((s,i)=>{
+    const[dx,dy]=pt(i,R*Math.max(s.p,4)/100);
+    dots+=`<circle class="dot" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="3.6"/>`;
+    const[lx,ly]=pt(i,R+24);
+    let anchor='middle'; if(lx<cx-10)anchor='end'; if(lx>cx+10)anchor='start';
+    labels+=`<text class="lbl" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}">${s.fase.curta}</text>
+             <text class="val" x="${lx.toFixed(1)}" y="${(ly+14).toFixed(1)}" text-anchor="${anchor}">${Math.round(s.p)}</text>`;
+  });
+  return `<svg class="radar" viewBox="0 0 460 400" role="img" aria-label="Perfil nas três obras">
+    ${rings}${axes}<polygon class="shape" points="${shapePts}"/>${dots}${labels}</svg>`;
+}
+
+renderIntro();
+</script>
+</body>
+</html>
